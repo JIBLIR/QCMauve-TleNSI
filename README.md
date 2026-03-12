@@ -6,7 +6,7 @@ _pour le setup des fichiers sql, nous avons besoin de différents prérequis :_ 
             2. **Création d'une database PQCM02, avec** 
             
   ```sql 
-CREATE DATABASE PQCM02
+CREATE DATABASE PQCM02;
 ```
 
 3. **instanciation du fichier setup.sql**
@@ -14,8 +14,8 @@ le fichier setup.sql permet d'instancier toutes les tables de la database
 
 
 ```sql
-USE PQCM02
-SOURCE ./setup.sql
+USE PQCM02;
+SOURCE ./setup.sql;
 ```
 
 
