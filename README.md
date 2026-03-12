@@ -1,4 +1,4 @@
-## Semaine 1 ~ 9 - 15 mars :
+### Semaine 1 ~ 9 - 15 mars :
 #### ~ _I création de setup.sql afin d'instancier les tables sql_
 
 _pour le setup des fichiers sql, nous avons besoin de différents prérequis :_  \
