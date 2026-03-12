@@ -1,5 +1,5 @@
 ### Semaine 1 ~ 9 - 15 mars :
-#### ~ _I création de setup.sql afin d'instancier les tables sql_
+#### ~ _I Création de setup.sql afin d'instancier les tables sql_
 
 _pour le setup des fichiers sql, nous avons besoin de différents prérequis :_  \
             1. **Installation de Mysql ou Mariadb**  \
@@ -20,3 +20,6 @@ SOURCE ./setup.sql
 
 
 une fois ces étapes réalisés dans le terminal avec mysql, nous pouvons utiliser nos QCMs depuis la base de données
+
+
+#### ~ _II Création de questionnaire.sql afin de tester notre database avec un petit programme_
