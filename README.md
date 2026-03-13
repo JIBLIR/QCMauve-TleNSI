@@ -28,9 +28,8 @@ une fois ces étapes réalisés dans le terminal avec mysql, nous pouvons utilis
 ### Journée du 7-8 mars
 
 Creation du site:
-            Creation du bouton pour sélectioner la classe voulu.
-            
-            Creation du bouton pour se connecter et créer un compte.
+            Creation du bouton pour sélectioner la classe voulu. 
+             Creation du bouton pour se connecter et créer un compte.
 ### Journée du 13 mars : 
    Installation d'enregistrement en sql dans creer_compte
 
