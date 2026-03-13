@@ -184,7 +184,7 @@ def creer_compte(Profession = None,identifiant = None,Mot_de_passe = None):
 		baseDeDonnees = mysql.connector.connect(host="localhost", user='nsi', password = "nsi", database="P02QCM")
 		cur = baseDeDonnees.cursor()
 		cur.execute(
-		"INSERT INTO utilisateur (nom_user,mdp_user,metier) VALUES (identifiant,Mod_de_passe,Profession)"
+		"INSERT INTO utilisateur (nom_user,mdp_user,metier) VALUES (?,?,?)",(identifiant,Mot_de_passe,Profession)
 		)
 
 		baseDeDonnees.commit()
