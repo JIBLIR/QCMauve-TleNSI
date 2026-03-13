@@ -31,5 +31,8 @@ Creation du site:
             Creation du bouton pour sélectioner la classe voulu.
             Creation du bouton pour se connecter et créer un compte 
 
+Journée du 13 mars : 
+            Installation d'enregistrement en sql dans creer_compte
+
 
 
