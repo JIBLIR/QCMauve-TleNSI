@@ -25,13 +25,13 @@ une fois ces étapes réalisés dans le terminal avec mysql, nous pouvons utilis
 
 #### ~ _II Création de questionnaire.sql afin de tester notre database avec un petit programme_
 ### Jules
-Journée du 7-8 mars
+###Journée du 7-8 mars
 
 Creation du site:
             Creation du bouton pour sélectioner la classe voulu.
             Creation du bouton pour se connecter et créer un compte 
 
-Journée du 13 mars : 
+###Journée du 13 mars : 
             Installation d'enregistrement en sql dans creer_compte
 
 
