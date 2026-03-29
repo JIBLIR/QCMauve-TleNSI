@@ -304,7 +304,7 @@ def creer_compte(Profession = None,identifiant = None,Mot_de_passe = None):
 
 creer_compte.exposed = True 
 
-#=============Partie lancage du serveur=============#
+#=============Partie pour la mise en ligne du serveur=============#
 cherrypy.config.update({
 	"server.socket_host"	:"172.16.100.22", 
 	"server.socket_port"	:5432,
