@@ -33,5 +33,6 @@ Creation du site:
 ### Journée du 13 mars : 
    Installation d'enregistrement en sql dans creer_compte
 
-
+### Journée du 29 mars :
+   Ajout de la partie de cryptage puis recherche du bon mdp dans la base de donnée dans la fonction connection
 
