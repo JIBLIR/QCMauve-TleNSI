@@ -1,5 +1,6 @@
+
+## Jb
 ### Semaine 1 ~ 9 - 15 mars :
-### Jb
 #### ~ _I Création de setup.sql afin d'instancier les tables sql_
 
 _pour le setup des fichiers sql, nous avons besoin de différents prérequis :_  \
@@ -26,7 +27,7 @@ une fois ces étapes réalisés dans le terminal avec mysql, nous pouvons utilis
 #### ~ _II Création de questionnaire.sql afin de tester notre database avec un petit programme_
 ### Semaine ~ 6 - 12 avril :
 #### ~ _III Application de questionnaire.sql au Site pour faire un QCM_
-### Jules
+## Jules
 ### Journée du 7-8 mars
 
 Creation du site:
