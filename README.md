@@ -38,4 +38,6 @@ Creation du site:
 
 ### Journée du 29 mars :
    Ajout de la partie de cryptage puis recherche du bon mdp dans la base de donnée dans la fonction connection
-
+### Semaine du 12 avril : 
+   Modification de la partie cryptage avec la mise en place de la bibliotheque bcrypt qui hach le mdp 
+   Puis mise en place d'un debut de chopse pour l'autentification directement sur le site 
