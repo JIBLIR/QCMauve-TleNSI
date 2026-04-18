@@ -41,3 +41,5 @@ Creation du site:
 ### Semaine du 12 avril : 
    Modification de la partie cryptage avec la mise en place de la bibliotheque bcrypt qui hach le mdp 
    Puis mise en place d'un debut de chopse pour l'autentification directement sur le site 
+### Samedi 18 avril :
+   Ajout de deux fonctions une qui permet d'ajouter des qcms si l'on est connecté et en tant que professeur puis une autre qui permet de suprimmer des qcms si l'on est connecter en tant que professeur aussi. J'ai pu aussi mettre une condition dans le creer_compte avec que si le nom de user donné par la personne qui veut créer un compte est deja prise alors l'utilisateur qui crée le compte est signallé que le nom est deja prit. J'ai aussi donc mis en place le system de session qui permet de restreindre certaines parties du sites.  
