@@ -21,6 +21,8 @@ def menu():
                     <li><a href="/terminale">Terminale</a></li>
                 </ul>
             </li>
+			<li><a href="/ajout_qcm">Ajout Qcm</a></li>
+            <li><a href="/sup">Suprimmer un Qcm</a></li>
             """ + bouton + """
         </ul>
     </div>
@@ -320,7 +322,7 @@ deconnexion.exposed = True
 
 #============= Creation de compte =============#
 def creer_compte(Profession = None,identifiant = None,Mot_de_passe = None):
-
+	message = ""
     if Profession and identifiant and Mot_de_passe :
         Profession = int(Profession)
         baseDeDonnees = mysql.connector.connect(host="localhost", user='nsi', password = "nsi", database="P02QCM")
@@ -366,10 +368,9 @@ def creer_compte(Profession = None,identifiant = None,Mot_de_passe = None):
 			<button type="submit">Valider</button>
 			</form>
             
-            """ + message + """
-            
 			<p > <a href="/connection">Se connecter </a> </p>
 		</div>
+		""" + message + """
 	</body>
 </html>
 
