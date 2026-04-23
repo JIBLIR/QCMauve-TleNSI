@@ -1,7 +1,7 @@
-import cherrypy 
+import cherrypy
 import os
-import mysql.connector 
-import bcrypt # ---> Biblio pour le cryptage de mdp 
+import mysql.connector
+import bcrypt # ---> Biblio pour le cryptage de mdp
 
 #=============Site WEB=============#
 def menu():
@@ -28,7 +28,7 @@ def menu():
     </div>
     """
 
-def index(): 
+def index():
     return """
 <!DOCTYPE html>
 <html>
@@ -48,9 +48,30 @@ def index():
 
 	"""
 
-index.exposed = True 
+index.exposed = True
 
-def seconde():
+def seconde(reponse=None):
+    import mysql.connector
+
+    index_question = cherrypy.session.get('index_question', 0)
+    baseDeDonnees = mysql.connector.connect(host="localhost", user='nsi', password="nsi", database="P02QCM")
+    curseur = baseDeDonnees.cursor()
+    curseur.execute('select * from questions')
+    questions = curseur.fetchall()
+    question = questions[(index_question)]
+
+    message = ""
+    if reponse is not None:
+        if str(reponse) == str(question[6]):
+            message = 'bonne réponse!!'
+            index_question += 1
+        else:
+            message = f'faux, {question[int(question[6]) + 1]}'
+    cherrypy.session['index_question'] = index_question
+
+
+    baseDeDonnees.close()
+
     return """
 <!DOCTYPE html>
 <html>
@@ -62,26 +83,25 @@ def seconde():
 	<body>
 		<h1>Site pour faire des qcm</h1>
 
-		""" + menu() + """
-        
-		<h1>Seconde</h1><br>
-		<p>Questions en Maths</p>
-			<input type="number" id="nb_ques_Maths_Snd" name="nb_ques_Maths_Snd" min="1" max="5" value="1"/>
-			<button type="submit">Valider</button>
-			<br>
-		<p>Questions en Physique</p>
-			<input type="number" id="nb_ques_Physique_Snd" name="nb_ques_Physique_Snd" min="1" max="5" value="1"/>
-			<button type="submit">Valider</button>
-			<br>
-		<p>Questions en Autres</p>
-			<input type="number" id="nb_ques_Autre_Snd" name="nb_ques_Autre_Snd" min="1" max="5" value="1"/>
-			<button type="submit">Valider</button>
-	</body>
+		""" + menu() + f""" {question[1]}
+    <form method="post" action="/seconde">
+    <ol>
+    <li> {question[2]} <input type="radio" value="1" name="reponse"  /> </li>
+    <li> {question[3]} <input type="radio" value="2" name="reponse" /> </li>
+    <li> {question[4]} <input type="radio" value="3" name="reponse" /> </li>
+    <li> {question[5]} <input type="radio" value="4" name="reponse" /> </li>
+    </ol>
+    <button type="submit">Valider</button>
+	
+    <button type="submit" action="/seconde">Question Suivante</button>
+    </form>
+
+    <p>{message}</p>
+
+    </body>
 </html>
-
-	"""
-
-seconde.exposed = True 
+    """
+seconde.exposed = True
 
 def premiere():
     return """
@@ -103,7 +123,7 @@ def premiere():
 
 	"""
 
-premiere.exposed = True 
+premiere.exposed = True
 
 def terminale():
     return """
@@ -125,7 +145,7 @@ def terminale():
 
 	"""
 
-terminale.exposed = True 
+terminale.exposed = True
 
 #============= Ajout de Qcm =============#
 def ajout_qcm(question=None,rep1=None,rep2=None,rep3=None,rep4=None,bonne_rep=None,matiere=None):
@@ -145,7 +165,7 @@ def ajout_qcm(question=None,rep1=None,rep2=None,rep3=None,rep4=None,bonne_rep=No
         baseDeDonnees.commit()
         cur.close()
         baseDeDonnees.close()
-		
+
     return """
 <!DOCTYPE html>
 <html>
@@ -177,7 +197,7 @@ ajout_qcm.exposed = True
 #============= Suppression =============#
 
 def sup(id=None,question=None):
-    
+
     if "role" not in cherrypy.session:
         raise cherrypy.HTTPRedirect("/connection")
 
@@ -186,18 +206,18 @@ def sup(id=None,question=None):
 
     liste_questions = ""
     message = ""
-	
-    if question : 
+
+    if question :
         baseDeDonnees = mysql.connector.connect(host="localhost", user='nsi', password = "nsi", database="P02QCM")
         cur = baseDeDonnees.cursor()
         cur.execute("SELECT id_question, question FROM questions WHERE question LIKE %s",("%" + question + "%",))
         resultat = cur.fetchall()
-        
-        if resultat : 
+
+        if resultat :
             for liste in resultat:
                     id_question = liste[0]
                     question_l = liste[1]
-                    
+
                     liste_questions += """
                     <p>
                     """ + str(id_question) + """ - """ + question_l + """
@@ -208,8 +228,8 @@ def sup(id=None,question=None):
             message = "<p>Aucune question trouvée.</p>"
         cur.close()
         baseDeDonnees.close()
-    
-    if id : 
+
+    if id :
         baseDeDonnees = mysql.connector.connect(host="localhost", user='nsi', password = "nsi", database="P02QCM")
         cur = baseDeDonnees.cursor()
         cur.execute("DELETE FROM questions WHERE id_question = %s",(id,))
@@ -267,8 +287,8 @@ def connection(identifiant=None, Mot_de_passe=None):
             if resultat:
                 mdp_stocke = resultat[0]
                 metier = resultat[1]
-
-                if bcrypt.checkpw(Mot_de_passe.encode(), mdp_stocke):
+                # ERREUR : SI LE MDP EST FAUX
+                if bcrypt.checkpw(Mot_de_passe.encode(), mdp_stocke.encode()):
                     cherrypy.session["user"] = identifiant
                     cherrypy.session["role"] = metier
                     raise cherrypy.HTTPRedirect("/")
@@ -311,7 +331,7 @@ def connection(identifiant=None, Mot_de_passe=None):
 
 	"""
 
-connection.exposed = True 
+connection.exposed = True
 
 #============= DECONNEXION =============#
 def deconnexion():
@@ -322,7 +342,7 @@ deconnexion.exposed = True
 
 #============= Creation de compte =============#
 def creer_compte(Profession = None,identifiant = None,Mot_de_passe = None):
-	message = ""
+    message = ""
     if Profession and identifiant and Mot_de_passe :
         Profession = int(Profession)
         baseDeDonnees = mysql.connector.connect(host="localhost", user='nsi', password = "nsi", database="P02QCM")
@@ -330,7 +350,7 @@ def creer_compte(Profession = None,identifiant = None,Mot_de_passe = None):
         cur.execute(
             "SELECT * from utilisateur WHERE nom_user = %s",(identifiant,)
 		)
-        result = cur.fetchall
+        result = cur.fetchall()
         if result :
             message = "<p style='color:red;'>Identifiant déjà pris</p>"
         else :
@@ -342,41 +362,39 @@ def creer_compte(Profession = None,identifiant = None,Mot_de_passe = None):
             message = "<p style='color:green;'>Compte créé avec succès</p>"
         cur.close()
         baseDeDonnees.close()
-    return"""
-<!DOCTYPE html>
-<html>
-	<head>
-		<meta charset="utf-8">
-		<title>Mon site Web</title>
-		<link rel="stylesheet" href="/style_projet_Bd_NSI.css">
-	</head>
-	<body>
-		<h1>Site pour faire des qcm</h1>
-		
-		""" + menu() + """
-        
-		<div id="inter_co">  
-		<p style="text-decoration: underline">Créer un compte</p>
-			<form method="post" action="/creer_compte">
-				<select name="Profession">
-					<option value="1">Profeseur</option>
-					<option value="0">Elève</option>
-				</select>
-				<input type="text" name="identifiant" placeholder="Identifiant"  required>
-				<input type="password" name="Mot_de_passe" placeholder="Mot de passe" minlength="16" required>
-			
-			<button type="submit">Valider</button>
-			</form>
-            
-			<p > <a href="/connection">Se connecter </a> </p>
-		</div>
-		""" + message + """
-	</body>
-</html>
+    return """
+            <!DOCTYPE html>
+            <html>
+                <head>
+                    <meta charset="utf-8">
+                    <title>Mon site Web</title>
+                    <link rel="stylesheet" href="/style_projet_Bd_NSI.css">
+                </head>
+                <body>
+                    <h1>Site pour faire des qcm</h1>
+                    
+                    """ + menu() + """
+                    
+                    <div id="inter_co">  
+                    <p style="text-decoration: underline">Créer un compte</p>
+                        <form method="post" action="/creer_compte">
+                            <select name="Profession">
+                                <option value="1">Professeur</option>
+                                <option value="0">Elève</option>
+                            </select>
+                            <input type="text" name="identifiant" placeholder="Identifiant"  required>
+                            <input type="password" name="Mot_de_passe" placeholder="Mot de passe" minlength="16" required>
+                        
+                        <button type="submit">Valider</button>
+                        </form>
+                        
+                        <p > <a href="/connection">Se connecter </a> </p>
+                    </div>
+                    """ + message + """
+                </body>
+            </html>"""
 
-	"""
-
-creer_compte.exposed = True 
+creer_compte.exposed = True
 
 #=============Partie pour la mise en ligne du serveur=============#
 
@@ -384,12 +402,12 @@ creer_compte.exposed = True
 #ip lycée : 172.16.100.22
 
 cherrypy.config.update({
-	"server.socket_host"	:"192.168.1.8", 
+	"server.socket_host"	:"127.0.0.1",
 	"server.socket_port"	:5432,
 	"server.socket_pool"	:5,
 	"tools.sessions.on"		:True,
 	"tools.encode.encoding"	:"utf-8",
-	"tools.staticdir.on"	:True, 
+	"tools.staticdir.on"	:True,
 	"tools.staticdir.dir": os.path.join(os.getcwd(), "static_2")
 })
 
