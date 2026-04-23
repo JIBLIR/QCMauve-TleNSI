@@ -27,6 +27,8 @@ une fois ces étapes réalisés dans le terminal avec mysql, nous pouvons utilis
 #### ~ _II Création de questionnaire.sql afin de tester notre database avec un petit programme_
 ### Semaine ~ 6 - 12 avril :
 #### ~ _III Application de questionnaire.sql au Site pour faire un QCM_
+### 23 avril :
+#### ~ _Correction des bugs de connexion et fusion des codes_
 ## Jules
 ### Journée du 7-8 mars
 
