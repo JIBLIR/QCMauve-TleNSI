@@ -29,6 +29,8 @@ une fois ces étapes réalisés dans le terminal avec mysql, nous pouvons utilis
 #### ~ _III Application de questionnaire.sql au Site pour faire un QCM_
 ### 23 avril :
 #### ~ _IV Correction des bugs de connexion et fusion des codes_
+### 14 mai amélioration de l'interface web :
+#### ~ _V Correction des bugs de connexion et fusion des codes_
 ## Jules
 ### Journée du 7-8 mars
 
