@@ -49,3 +49,5 @@ Creation du site:
    Puis mise en place d'un debut de chopse pour l'autentification directement sur le site 
 ### Samedi 18 avril :
    Ajout de deux fonctions une qui permet d'ajouter des qcms si l'on est connecté et en tant que professeur puis une autre qui permet de suprimmer des qcms si l'on est connecter en tant que professeur aussi. J'ai pu aussi mettre une condition dans le creer_compte avec que si le nom de user donné par la personne qui veut créer un compte est deja prise alors l'utilisateur qui crée le compte est signallé que le nom est deja prit. J'ai aussi donc mis en place le system de session qui permet de restreindre certaines parties du sites.  
+### 18 mai :
+   Correction de plusieurs choses dans le programme python liée au qcm, pour les classes 2nd, 1ere et Terminale on peut aller chercher les questions du niveau. Puis modification du css pour faire que quand l'on passe la souris dessus l'onglet classe les classes apparaisent en dessous. 
