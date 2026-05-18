@@ -17,14 +17,14 @@ h1 {
 }
 
 #nav ul {
-    list-style: none;
     display: flex;
+    list-style: none;
     justify-content: center;
     align-items: center;
     gap: 12px;
-    padding: 6px 10px;
+    padding: 10px 15px;
 
-    width: 50%;
+    width: 70%;
     margin: 0 auto;
 
     background: transparent;
@@ -32,10 +32,13 @@ h1 {
     backdrop-filter: none;
     border-radius: 10px;
 }
+#nav ul ul {
+    display: none;
+}
 
 #nav ul li {
-    padding: 5px 10px;
-    font-size: 13px;
+    padding: 10px 18px;
+    font-size: 18px;
     font-weight: bold;
     border-radius: 15px;
     transition: background-color 0.3s, transform 0.3s;
@@ -74,4 +77,58 @@ p {
 
 i {
     color: white;
+}
+
+
+.dropdown {
+    position: relative;
+}
+
+.dropdown-menu {
+    display: none !important;   
+    position: absolute;
+    top: 100%;
+    left: 50%;
+    transform: translateX(-50%);
+
+    background: #111;
+    padding: 10px;
+    border-radius: 10px;
+
+    min-width: 120px;
+    z-index: 99999;
+}
+
+.dropdown:hover .dropdown-menu {
+    display: block !important;  
+}
+
+.dropdown-menu li {
+    display: block;
+}
+
+.dropdown-menu li a {
+    display: block;
+    padding: 10px;
+    color: #b57bff;
+    text-decoration: none;
+    border-radius: 6px;
+    font-size: 15px;
+    background-color: #1a1025;
+}
+
+.dropdown-menu li a:hover {
+    background: #2a163d;
+}
+
+#inter_co input,
+#inter_co select {
+    font-size: 16px;
+    padding: 10px;
+    margin: 10px 0;
+}
+
+#inter_co button {
+    font-size: 16px;
+    padding: 10px 20px;
 }
