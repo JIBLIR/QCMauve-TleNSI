@@ -41,22 +41,22 @@ INSERT INTO `notes` (`id_user`,`valeur`, `matiere`, `id_question`) VALUES
 
 
 
-DROP TABLE IF EXISTS `questions`;
-CREATE TABLE IF NOT EXISTS `questions` (
-  `id_question` int(10) UNSIGNED NOT NULL AUTO_INCREMENT,
-  `question` TINYTEXT,
-  `reponse1` TINYTEXT,
-  `reponse2` TINYTEXT,
-  `reponse3` TINYTEXT,
-  `reponse4` TINYTEXT,
-  `bonne_reponse` int(1),
-  `matiere`  TINYTEXT,
-  PRIMARY KEY (`id_question`)
+CREATE TABLE questions (
+    id_question INT UNSIGNED NOT NULL AUTO_INCREMENT,
+    question TEXT,
+    reponse1 TEXT,
+    reponse2 TEXT,
+    reponse3 TEXT,
+    reponse4 TEXT,
+    bonne_reponse INT(1),
+    matiere VARCHAR(50),
+    classe INT(1),
+    PRIMARY KEY (id_question)
 ) ENGINE=MyISAM AUTO_INCREMENT=121 DEFAULT CHARSET=utf8;
 
-INSERT INTO `questions` (`id_question`,`question`, `reponse1`, `reponse2`,`reponse3`,`reponse4`,`bonne_reponse`,`matiere`) VALUES
-(0,'capitale du Bahreïn ?','Doha','Dubaï','Manama','Riyad',3,'histoire'),
-(1,'Quel philosophe critique la morale religieuse ?','Sextus Empiricus','Nietzsche','Mill','Karl Marx',2,'philosophie'); 
+INSERT INTO `questions` (`id_question`,`question`, `reponse1`, `reponse2`,`reponse3`,`reponse4`,`bonne_reponse`,`matiere`,`classe`) VALUES
+(0,'capitale du Bahreïn ?','Doha','Dubaï','Manama','Riyad',3,'histoire',2),
+(1,'Quel philosophe critique la morale religieuse ?','Sextus Empiricus','Nietzsche','Mill','Karl Marx',2,'philosophie',0); 
 
 
 
