@@ -77,41 +77,62 @@ def index():
 index.exposed = True
 
 
-def seconde(reponse=None, action=None):
+def moteurqcm(reponse=None,matiere = None,classe = None,note=None):
+    # bugs observés : sur l'index question (si je vais en arrière de la page ça change tout)F
+    if matiere is None: matiere = cherrypy.session.get('matiere', None)
+    if classe is None: classe = cherrypy.session.get('classe', None)
+    if note is None: note = cherrypy.session.get('note', 0)
+    print(matiere,classe,note)
+    cherrypy.session['matiere'] = matiere
+    cherrypy.session['classe'] = classe
+    cherrypy.session['note'] = note
+    import mysql.connector
 
-    index_question = cherrypy.session.get('index_question_seconde', 0)
+    index_question = cherrypy.session.get('index_question', 0)
+    print(index_question)
     baseDeDonnees = mysql.connector.connect(host="localhost", user='nsi', password="nsi", database="PQCM02")
-    cur = baseDeDonnees.cursor()
-    cur.execute("SELECT * FROM questions WHERE classe = 2")
-    questions = cur.fetchall()
-
-    if len(questions) == 0:
-        return "<h1>Aucune question pour Seconde</h1>"
-
-    if index_question >= len(questions):
-        index_question = 0
-
-    question = questions[index_question]
-
-    message = ""
-
-    if action == "valider":
+    curseur = baseDeDonnees.cursor()
     
-        if reponse is None or reponse == "":
-            message = "Veuillez sélectionner une réponse."
-        elif str(reponse) == str(question[6]):
-            message = "Bonne réponse !"
-        else:
-            message = f"Faux ! Bonne réponse : {question[int(question[6]) + 1]}"
+    message = ""
+    if classe is not None and matiere is not None : 
+        curseur.execute(f"select * from questions where classe = {classe} AND matiere = '{matiere}';")
+        questions = curseur.fetchall()
+        question = questions[(index_question)] 
 
-    elif action == "suivante":
-        index_question += 1
+        qcm = f""" {question[1]}
+            <form method="post" action="/moteurqcm">
+            <ol>
+            <li> {question[2]} <input type="radio" value="1" name="reponse"  /> </li>
+            <li> {question[3]} <input type="radio" value="2" name="reponse" /> </li>
+            <li> {question[4]} <input type="radio" value="3" name="reponse" /> </li>
+            <li> {question[5]} <input type="radio" value="4" name="reponse" /> </li>
+            </ol>
+            <button type="submit">Valider</button>
 
-    if index_question >= len(questions):
-        index_question = 0
+            <button type="submit" action="/moteurqcm">Question Suivante</button>
+            </form>
+            """
+        
+        if reponse is not None:
+            if index_question < len(questions) - 1: qcm = f"""
+                                                    <form method="post" action="/moteurqcm">
+                                                    <button type="submit" action="/moteurqcm">Question Suivante</button>
+                                                    </form>"""
+            else : qcm = "<p>Fin du QCM</p>"
 
-    cherrypy.session['index_question_seconde'] = index_question
-
+            if str(reponse) == str(question[6]):
+                index_question += 1
+                cherrypy.session['note'] += 1
+                qcm += f"bonne réponse, {question[int(question[6]) + 1]} "
+        
+            else:
+                index_question += 1
+                qcm += f"faux, la bonne réponse était {question[int(question[6]) + 1]} "
+        
+        note = cherrypy.session.get('note', 0)
+        qcm +=  f'question {index_question} sur {len(questions)} questions | {note}/{len(questions)}'
+        cherrypy.session['index_question'] = index_question
+    else : qcm = ""
 
     baseDeDonnees.close()
 
@@ -121,178 +142,145 @@ def seconde(reponse=None, action=None):
 	<head>
 		<meta charset="utf-8">
 		<title>Mon site Web</title>
-        <link rel="stylesheet" href="/style_projet_Bd_NSI.css">
+        <link rel="stylesheet" href="/static/style_projet_Bd_NSI.css">
 	</head>
 	<body>
 		<h1>QCMauve</h1>
 
-		""" + menu() + f""" {question[1]}
-    <form method="post" action="/seconde">
-    <ol>
-    <li> {question[2]} <input type="radio" value="1" name="reponse"  /> </li>
-    <li> {question[3]} <input type="radio" value="2" name="reponse" /> </li>
-    <li> {question[4]} <input type="radio" value="3" name="reponse" /> </li>
-    <li> {question[5]} <input type="radio" value="4" name="reponse" /> </li>
-    </ol>
-    <button type="submit" name="action" value="valider">Valider</button>
-
-    <button type="submit" name="action" value="suivante">Question Suivante</button>
-	
-    
-    </form>
-
-    <p>{message}</p>
-
+		""" + menu() + qcm + """
     </body>
 </html>
     """
+   
+moteurqcm.exposed = True
 
+def seconde():
+    import mysql.connector
+    
+    cherrypy.session['classe'] = 2
+    cherrypy.session['note'] = 0
+    cherrypy.session['index_question'] = 0
+    #index_question = cherrypy.session.get('index_question', 0) #jsp ?
+    baseDeDonnees = mysql.connector.connect(host="localhost", user='nsi', password="nsi", database="PQCM02")
+    curseur = baseDeDonnees.cursor()
+    
+    curseur.execute('SELECT DISTINCT matiere from questions WHERE classe = 2;')
+    matieres = curseur.fetchall()
+    boutons = ""
+    for i in range(len(matieres)):
+        print(matieres[i][0])
+        matiere = matieres[i][0]
+        boutons += f'<li> {matiere} <input type="radio" value="{matiere}" name="matiere"  /> </li>'
+    return """
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<title>Mon site Web</title>
+        <link rel="stylesheet" href="/static/style_projet_Bd_NSI.css">
+	</head>
+	<body>
+		<h1>QCMauve</h1>
+
+		""" + menu() + f"""
+        <form method="post" action="/moteurqcm">
+    <ol>
+    {boutons}
+    </ol>
+    <button type="submit">Valider</button>
+    </form>
+	</body>
+</html>
+
+	"""
 
 seconde.exposed = True
 
 
-def premiere(reponse=None, action=None):
-
-    index_question = cherrypy.session.get('index_question_premiere', 0)
-    baseDeDonnees = mysql.connector.connect(host="localhost", user='nsi', password="nsi", database="PQCM02")
-    cur = baseDeDonnees.cursor()
-    cur.execute("SELECT * FROM questions WHERE classe = 1")
-    questions = cur.fetchall()
-
-    if len(questions) == 0:
-        return "<h1>Aucune question pour Premiere</h1>"
-
-    if index_question >= len(questions):
-        index_question = 0
-
-    question = questions[index_question]
-
-    message = ""
-
-    if action == "valider":
+def premiere():
+    import mysql.connector
     
-        if reponse is None or reponse == "":
-            message = "Veuillez sélectionner une réponse."
-        elif str(reponse) == str(question[6]):
-            message = "Bonne réponse !"
-        else:
-            message = f"Faux ! Bonne réponse : {question[int(question[6]) + 1]}"
-
-    elif action == "suivante":
-        index_question += 1
-
-    if index_question >= len(questions):
-        index_question = 0
-
-    cherrypy.session['index_question_premiere'] = index_question
-
-
-    baseDeDonnees.close()
-
+    cherrypy.session['classe'] = 1
+    cherrypy.session['note'] = 0
+    cherrypy.session['index_question'] = 0
+    #index_question = cherrypy.session.get('index_question', 0) #jsp ?
+    baseDeDonnees = mysql.connector.connect(host="localhost", user='nsi', password="nsi", database="PQCM02")
+    curseur = baseDeDonnees.cursor()
+    
+    curseur.execute('SELECT DISTINCT matiere from questions WHERE classe = 1;')
+    matieres = curseur.fetchall()
+    boutons = ""
+    for i in range(len(matieres)):
+        print(matieres[i][0])
+        matiere = matieres[i][0]
+        boutons += f'<li> {matiere} <input type="radio" value="{matiere}" name="matiere"  /> </li>'
     return """
 <!DOCTYPE html>
 <html>
 	<head>
 		<meta charset="utf-8">
 		<title>Mon site Web</title>
-        <link rel="stylesheet" href="/style_projet_Bd_NSI.css">
+        <link rel="stylesheet" href="/static/style_projet_Bd_NSI.css">
 	</head>
 	<body>
 		<h1>QCMauve</h1>
 
-		""" + menu() + f""" {question[1]}
-    <form method="post" action="/premiere">
+		""" + menu() + f"""
+        <form method="post" action="/moteurqcm">
     <ol>
-    <li> {question[2]} <input type="radio" value="1" name="reponse"  /> </li>
-    <li> {question[3]} <input type="radio" value="2" name="reponse" /> </li>
-    <li> {question[4]} <input type="radio" value="3" name="reponse" /> </li>
-    <li> {question[5]} <input type="radio" value="4" name="reponse" /> </li>
+    {boutons}
     </ol>
-    <button type="submit" name="action" value="valider">Valider</button>
-
-    <button type="submit" name="action" value="suivante">Question Suivante</button>
-	
-    
+    <button type="submit">Valider</button>
     </form>
-
-    <p>{message}</p>
-
-    </body>
+	</body>
 </html>
-    """
+
+	"""
 
 
 premiere.exposed = True
 
 
-def terminale(reponse=None, action=None):
-    index_question = cherrypy.session.get('index_question_terminale', 0)
-    baseDeDonnees = mysql.connector.connect(host="localhost", user='nsi', password="nsi", database="PQCM02")
-    cur = baseDeDonnees.cursor()
-    cur.execute("SELECT * FROM questions WHERE classe = 0")
-    questions = cur.fetchall()
-
-    if len(questions) == 0:
-        return "<h1>Aucune question pour Terminale</h1>"
-
-    if index_question >= len(questions):
-        index_question = 0
-
-    question = questions[index_question]
-
-    message = ""
-
-    if action == "valider":
+def terminale():
+    import mysql.connector
     
-        if reponse is None or reponse == "":
-            message = "Veuillez sélectionner une réponse."
-        elif str(reponse) == str(question[6]):
-            message = "Bonne réponse !"
-        else:
-            message = f"Faux ! Bonne réponse : {question[int(question[6]) + 1]}"
-
-    elif action == "suivante":
-        index_question += 1
-
-    if index_question >= len(questions):
-        index_question = 0
-
-    cherrypy.session['index_question_terminale'] = index_question
-
-
-    baseDeDonnees.close()
-
+    cherrypy.session['classe'] = 0
+    cherrypy.session['note'] = 0
+    cherrypy.session['index_question'] = 0
+    #index_question = cherrypy.session.get('index_question', 0) #jsp ?
+    baseDeDonnees = mysql.connector.connect(host="localhost", user='nsi', password="nsi", database="PQCM02")
+    curseur = baseDeDonnees.cursor()
+    
+    curseur.execute('SELECT DISTINCT matiere from questions WHERE classe = 0;')
+    matieres = curseur.fetchall()
+    boutons = ""
+    for i in range(len(matieres)):
+        print(matieres[i][0])
+        matiere = matieres[i][0]
+        boutons += f'<li> {matiere} <input type="radio" value="{matiere}" name="matiere"  /> </li>'
     return """
 <!DOCTYPE html>
 <html>
 	<head>
 		<meta charset="utf-8">
 		<title>Mon site Web</title>
-        <link rel="stylesheet" href="/style_projet_Bd_NSI.css">
+        <link rel="stylesheet" href="/static/style_projet_Bd_NSI.css">
 	</head>
 	<body>
 		<h1>QCMauve</h1>
 
-		""" + menu() + f""" {question[1]}
-    <form method="post" action="/terminale">
+		""" + menu() + f"""
+        <form method="post" action="/moteurqcm">
     <ol>
-    <li> {question[2]} <input type="radio" value="1" name="reponse"  /> </li>
-    <li> {question[3]} <input type="radio" value="2" name="reponse" /> </li>
-    <li> {question[4]} <input type="radio" value="3" name="reponse" /> </li>
-    <li> {question[5]} <input type="radio" value="4" name="reponse" /> </li>
+    {boutons}
     </ol>
-    <button type="submit" name="action" value="valider">Valider</button>
-
-    <button type="submit" name="action" value="suivante">Question Suivante</button>
-	
-    
+    <button type="submit">Valider</button>
     </form>
-
-    <p>{message}</p>
-
-    </body>
+	</body>
 </html>
-    """
+
+	"""
+
 
 terminale.exposed = True
 
@@ -573,8 +561,8 @@ creer_compte.exposed = True
 # ip lycée : 172.16.100.22
 
 cherrypy.config.update({
-    "server.socket_host": "192.168.1.8",
-    "server.socket_port": 8083,
+    "server.socket_host": "127.0.0.1",
+    "server.socket_port": 8087,
     "server.socket_pool": 5,
     "tools.sessions.on": True,
     "tools.encode.encoding": "utf-8",
@@ -595,6 +583,7 @@ cherrypy.tree.mount(sup, "/sup")
 cherrypy.tree.mount(connection, "/connection")
 cherrypy.tree.mount(deconnexion, "/deconnexion")
 cherrypy.tree.mount(creer_compte, "/creer_compte")
+cherrypy.tree.mount(moteurqcm, "/moteurqcm")
 
 cherrypy.engine.start()
 cherrypy.engine.block()
