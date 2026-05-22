@@ -663,6 +663,8 @@ creer_compte.exposed = True
 def stats():
     """Affiche les statistiques de l'utilisateur connecte."""
     # connexion a la base pour recuperer les notes de l'utilisateur
+	if "role" not in cherrypy.session:
+        raise cherrypy.HTTPRedirect("/connection")
     baseDeDonnees = mysql.connector.connect(host="localhost", user='nsi', password="nsi", database="P02QCM")
     curseur = baseDeDonnees.cursor()
     curseur.execute(f'SELECT valeur, matiere,classe from notes,utilisateur WHERE notes.id_user = utilisateur.id AND utilisateur.nom_user = "{cherrypy.session["user"]}";')
@@ -701,9 +703,6 @@ stats.exposed = True
 
 
 # ============= Partie pour la mise en ligne du serveur =============#
-
-# ip perso : 192.168.1.8
-# ip lycée : 172.16.100.22
 
 # configuration principale du serveur cherrypy
 cherrypy.config.update({
