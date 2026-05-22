@@ -7,6 +7,17 @@ import bcrypt  # bibliotheque pour le cryptage du mot de passe
 
 # ============= Site WEB =============#
 
+def ouvrir_connexion_bd():
+    """Ouvre une connexion MySQL en utf8mb4. Cette fonction permet la stabilité en n'ayant pas de caractères spéciaux qui occasionnerait une gène pour l'utilisateur"""
+    return mysql.connector.connect(
+        host="localhost",
+        user="nsi",
+        password="nsi",
+        database="P02QCM",
+        charset="utf8mb4",
+        use_unicode=True
+    )
+
 def menu():
     """Cree le menu de navigation selon le role de l'utilisateur."""
     # si l'utilisateur est professeur, on affiche les boutons professeurs
@@ -107,7 +118,7 @@ def moteurqcm(reponse=None, matiere=None, classe=None, note=None):
     print(index_question)
 
     # connexion a la base de donnees
-    baseDeDonnees = mysql.connector.connect(host="localhost", user='nsi', password="nsi", database="P02QCM")
+    baseDeDonnees = ouvrir_connexion_bd()
     curseur = baseDeDonnees.cursor()
 
     # si une classe et une matiere sont choisies, on peut lancer le qcm
@@ -209,7 +220,7 @@ def seconde():
     cherrypy.session['index_question'] = 0
 
     # connexion a la base pour recuperer les matieres disponibles
-    baseDeDonnees = mysql.connector.connect(host="localhost", user='nsi', password="nsi", database="P02QCM")
+    baseDeDonnees = ouvrir_connexion_bd()
     curseur = baseDeDonnees.cursor()
 
     curseur.execute('SELECT DISTINCT matiere from questions WHERE classe = 2;')
@@ -262,7 +273,7 @@ def premiere():
     cherrypy.session['index_question'] = 0
 
     # connexion a la base pour recuperer les matieres disponibles
-    baseDeDonnees = mysql.connector.connect(host="localhost", user='nsi', password="nsi", database="P02QCM")
+    baseDeDonnees = ouvrir_connexion_bd()
     curseur = baseDeDonnees.cursor()
 
     curseur.execute('SELECT DISTINCT matiere from questions WHERE classe = 1;')
@@ -315,7 +326,7 @@ def terminale():
     cherrypy.session['index_question'] = 0
 
     # connexion a la base pour recuperer les matieres disponibles
-    baseDeDonnees = mysql.connector.connect(host="localhost", user='nsi', password="nsi", database="P02QCM")
+    baseDeDonnees = ouvrir_connexion_bd()
     curseur = baseDeDonnees.cursor()
 
     curseur.execute('SELECT DISTINCT matiere from questions WHERE classe = 0;')
@@ -372,7 +383,7 @@ def ajout_qcm(question=None, rep1=None, rep2=None, rep3=None, rep4=None, bonne_r
 
     # si tous les champs sont remplis, on ajoute la question dans la base
     if rep1 and rep2 and rep3 and rep4 and question and classe:
-        baseDeDonnees = mysql.connector.connect(host="localhost", user='nsi', password="nsi", database="P02QCM")
+        baseDeDonnees = ouvrir_connexion_bd()
         cur = baseDeDonnees.cursor()
         cur.execute(
             "INSERT INTO questions (question,reponse1,reponse2,reponse3,reponse4,bonne_reponse,matiere,classe) VALUES (%s,%s,%s,%s,%s,%s,%s,%s)",
@@ -435,7 +446,7 @@ def sup(id=None, question=None):
 
     # si une recherche est faite, on affiche les questions correspondantes
     if question:
-        baseDeDonnees = mysql.connector.connect(host="localhost", user='nsi', password="nsi", database="P02QCM")
+        baseDeDonnees = ouvrir_connexion_bd()
         cur = baseDeDonnees.cursor()
         cur.execute("SELECT id_question, question FROM questions WHERE question LIKE %s", ("%" + question + "%",))
         resultat = cur.fetchall()
@@ -459,7 +470,7 @@ def sup(id=None, question=None):
 
     # si un identifiant est donne, on supprime directement la question
     if id:
-        baseDeDonnees = mysql.connector.connect(host="localhost", user='nsi', password="nsi", database="P02QCM")
+        baseDeDonnees = ouvrir_connexion_bd()
         cur = baseDeDonnees.cursor()
         cur.execute("DELETE FROM questions WHERE id_question = %s", (id,))
         baseDeDonnees.commit()
@@ -510,8 +521,7 @@ def connection(identifiant=None, Mot_de_passe=None):
 
         try:
             # connexion a la base de donnees
-            baseDeDonnees = mysql.connector.connect(host="localhost", user="nsi", password="nsi", database="P02QCM"
-                                                    )
+            baseDeDonnees = ouvrir_connexion_bd()
 
             cur = baseDeDonnees.cursor()
 
@@ -604,7 +614,7 @@ def creer_compte(Profession=None, identifiant=None, Mot_de_passe=None):
     # si tous les champs sont remplis, on cree le compte
     if Profession and identifiant and Mot_de_passe:
         Profession = int(Profession)
-        baseDeDonnees = mysql.connector.connect(host="localhost", user='nsi', password="nsi", database="P02QCM")
+        baseDeDonnees = ouvrir_connexion_bd()
         cur = baseDeDonnees.cursor()
         cur.execute(
             "SELECT * from utilisateur WHERE nom_user = %s", (identifiant,)
@@ -663,9 +673,7 @@ creer_compte.exposed = True
 def stats():
     """Affiche les statistiques de l'utilisateur connecte."""
     # connexion a la base pour recuperer les notes de l'utilisateur
-	if "role" not in cherrypy.session:
-        raise cherrypy.HTTPRedirect("/connection")
-    baseDeDonnees = mysql.connector.connect(host="localhost", user='nsi', password="nsi", database="P02QCM")
+    baseDeDonnees = ouvrir_connexion_bd()
     curseur = baseDeDonnees.cursor()
     curseur.execute(f'SELECT valeur, matiere,classe from notes,utilisateur WHERE notes.id_user = utilisateur.id AND utilisateur.nom_user = "{cherrypy.session["user"]}";')
     stats = curseur.fetchall()
@@ -703,6 +711,9 @@ stats.exposed = True
 
 
 # ============= Partie pour la mise en ligne du serveur =============#
+
+# ip perso : 192.168.1.8
+# ip lycée : 172.16.100.22
 
 # configuration principale du serveur cherrypy
 cherrypy.config.update({
