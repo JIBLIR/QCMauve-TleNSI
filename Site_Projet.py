@@ -71,7 +71,7 @@ def index():
     if "user" in cherrypy.session:
         message = '<img src="https://images7.memedroid.com/images/UPLOADED844/59be7d31cb08b.jpeg">' + '<br> <i>Vous pouvez désormais ajouter et supprimer des QCMs</i>'
     else:
-        message = '<img src="https://storage.googleapis.com/proudcity/elgl/uploads/2023/04/yoda.jpg" alt="alternatetext">' + "<br> <i>Bonjour, vous voilà sur une page web où l'on peut reviser plusieures matières de différentes classes.</i>"
+        message = '<img src="https://upload.wikimedia.org/wikipedia/commons/9/90/Exams_Start..._Now.jpg" alt="alternatetext">' + "<br> <i>Bonjour, vous voilà sur une page web où l'on peut reviser plusieures matières de différentes classes.</i>"
     return """
 <!DOCTYPE html>
 <html>
