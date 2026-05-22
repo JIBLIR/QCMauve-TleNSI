@@ -1,1 +1,134 @@
+body {
+    font-family: "JetBrains Mono", monospace;
+    text-align: center;
+    margin: 0;
+    padding: 0;
+    background-color: black;
+    color: white;
+    zoom: 60%;
+    color-scheme: dark;
+}
 
+h1 {
+    margin-top: 20px;
+    font-size: 28px;
+    text-decoration: underline;
+    color: white;
+}
+
+#nav ul {
+    display: flex;
+    list-style: none;
+    justify-content: center;
+    align-items: center;
+    gap: 12px;
+    padding: 10px 15px;
+
+    width: 70%;
+    margin: 0 auto;
+
+    background: transparent;
+    box-shadow: none;
+    backdrop-filter: none;
+    border-radius: 10px;
+}
+#nav ul ul {
+    display: none;
+}
+
+#nav ul li {
+    padding: 10px 18px;
+    font-size: 18px;
+    font-weight: bold;
+    border-radius: 15px;
+    transition: background-color 0.3s, transform 0.3s;
+    color: #b57bff;
+}
+
+#nav ul li a {
+    text-decoration: none;
+    color: #b57bff;
+}
+
+#nav ul li:hover {
+    background-color: #1a1025;
+    transform: translateY(-3px);
+}
+
+#nav ul li#co {
+    background-color: black;
+    border-radius: 15px;
+    border: 2px solid #b57bff;
+}
+
+#nav ul li#co a {
+    color: white;
+}
+
+#nav ul li#co:hover {
+    background-color: #1a1025;
+}
+
+p {
+    font-size: 20px;
+    margin-top: 30px;
+    color: white;
+}
+
+i {
+    color: white;
+}
+
+
+.dropdown {
+    position: relative;
+}
+
+.dropdown-menu {
+    display: none !important;   
+    position: absolute;
+    top: 100%;
+    left: 50%;
+    transform: translateX(-50%);
+
+    background: #111;
+    padding: 10px;
+    border-radius: 10px;
+
+    min-width: 120px;
+    z-index: 99999;
+}
+
+.dropdown:hover .dropdown-menu {
+    display: block !important;  
+}
+
+.dropdown-menu li {
+    display: block;
+}
+
+.dropdown-menu li a {
+    display: block;
+    padding: 10px;
+    color: #b57bff;
+    text-decoration: none;
+    border-radius: 6px;
+    font-size: 15px;
+    background-color: #1a1025;
+}
+
+.dropdown-menu li a:hover {
+    background: #2a163d;
+}
+
+#inter_co input,
+#inter_co select {
+    font-size: 16px;
+    padding: 10px;
+    margin: 10px 0;
+}
+
+#inter_co button {
+    font-size: 16px;
+    padding: 10px 20px;
+}
