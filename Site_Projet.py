@@ -107,7 +107,6 @@ def moteurqcm(reponse=None, matiere=None, classe=None, note=None):
         classe = cherrypy.session.get('classe', None)
     if note is None:
         note = cherrypy.session.get('note', 0)
-    print(matiere, classe, note)
     cherrypy.session['matiere'] = matiere
     cherrypy.session['classe'] = classe
     cherrypy.session['note'] = note
@@ -115,7 +114,6 @@ def moteurqcm(reponse=None, matiere=None, classe=None, note=None):
 
     # recuperation de l'index de la question actuelle
     index_question = cherrypy.session.get('index_question', 0)
-    print(index_question)
 
     # connexion a la base de donnees
     baseDeDonnees = ouvrir_connexion_bd()
@@ -229,7 +227,6 @@ def seconde():
 
     # creation des boutons radio pour chaque matiere
     for i in range(len(matieres)):
-        print(matieres[i][0])
         matiere = matieres[i][0]
         boutons += f'<li> {matiere} <input type="radio" value="{matiere}" name="matiere"  /> </li>'
 
@@ -282,7 +279,6 @@ def premiere():
 
     # creation des boutons radio pour chaque matiere
     for i in range(len(matieres)):
-        print(matieres[i][0])
         matiere = matieres[i][0]
         boutons += f'<li> {matiere} <input type="radio" value="{matiere}" name="matiere"  /> </li>'
 
@@ -335,7 +331,6 @@ def terminale():
 
     # creation des boutons radio pour chaque matiere
     for i in range(len(matieres)):
-        print(matieres[i][0])
         matiere = matieres[i][0]
         boutons += f'<li> {matiere} <input type="radio" value="{matiere}" name="matiere"  /> </li>'
 
@@ -683,7 +678,6 @@ def stats():
 
     # affichage des statistiques recuperees
     for i in range(len(stats)):
-        print(stats)
         stat = stats[i]
         infos += f' {stat[0]} % | {stat[1]} | {stat[2]}  <br> _________________ <br>'
     return """
